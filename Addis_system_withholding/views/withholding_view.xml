@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="discount_account_invoice_view_form" model="ir.ui.view">
+            <field name="name">withhold.account.invoice</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tax_totals']" position="after">
+                    <field name="withholding_amount" class="text-start oe_right" attrs="{'readonly': True, 'invisible': [('withholding_boolean', '=', False)]}" style="margin-left: 2.5em;  margin-top: 0.5px; font-size: 1em; font-weight: bold;"/>
+
+                </xpath>
+                <xpath expr="//field[@name='narration']" position="before">
+                    <div style="display: flex; justify-content: center; margin-left: 3em;">
+                        <label for="withholding_boolean" string="Withholding"/>
+                        <field name="withholding_boolean" class="oe_inline" style="margin-left: 1.25em;"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

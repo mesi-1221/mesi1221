@@ -34,23 +34,81 @@ class AddisSystemsProductPortalController(http.Controller):
         else:
             return {'error': 'User authentication failed'}
 
+    @http.route('/addisystems/create/product/data', type='json', methods=['POST', 'GET'], auth='user', csrf=False,
+                save_session=False)
+    def addis_systems_mpos_create_customer_invoiceseddfgh(self, **kw):
+        if request.env.user and request.env.user.id:
+            data = json.loads(request.httprequest.data)
+            df = data.copy()
+            quantity = df.pop("quantity", None)
+            data['name'] = data.get('name')
+            product_tmpl = request.env['product.template'].sudo().create(df)
+            product = request.env['product.product'].search([("product_tmpl_id", "=", product_tmpl.id)])
+
+            stock = request.env["stock.quant"].search([('product_id', '=', product.id)])
+            print(stock)
+            stock_data = {
+
+                "product_id": product.id,
+                "quantity": quantity,
+                "location_id": data.get("location_id"),
+            }
+            if not stock:
+                request.env["stock.quant"].create(stock_data)
+            else:
+                stock.write(stock_data)
+            try:
+                x = 0
+                return {
+                    "status": 1,
+                }
+            except Exception as e:
+                return {"status": e}
+
+
+    @http.route('/update/product/data', type='json', methods=['POST', 'GET'], auth='user', csrf=False,
+                save_session=False)
+    def addis_systems_mpos_updataswde_products_data(self, **kw):
+        if request.env.user and request.env.user.id:
+            vals = json.loads(request.httprequest.data)
+
+            stock = request.env["stock.quant"].search([('product_id', '=', vals['product_id'])])
+            if not stock:
+                request.env["stock.quant"].create(vals)
+            else:
+                stock.write(vals)
+            try:
+                x = 0
+                return {
+                    "status": 1,
+                }
+            except Exception as e:
+                return {"status": e}
+
     @http.route('/AddisSystems/MPoS/Update/Products/Data', type='json', methods=['POST', 'GET'], auth='user', csrf=False,
                 save_session=False)
-    def addis_systems_mpos_update_products_data(self):
+    def addis_systems_mpos_update_products_data(self,**kw):
         if request.env.user and request.env.user.id:
+            data = json.loads(request.httprequest.data)
             return_json = []
             products = request.env['product.template'].search([])
             for product in products:
                 quants = request.env['stock.quant'].search([('product_tmpl_id', '=', product.id)])
-                if quants:
+                product_product = request.env['product.product'].search([("product_tmpl_id", "=", product.id)])
+                print(product_product)
+                try:
                     quant = quants[0]
-                    quant.available_quantity = quant.quantity - quant.reserved_quantity
-                    single_data = {
+                    onhand_qty=quant.quantity
+                except:
+                    onhand_qty=0
+
+                single_data = {
                         "name": product.name,
                         "product_id": product.id,
+                        "product_product": product.id,
                         "internal_reference": product.default_code,
                         "price": product.list_price,
-                        "quantity_on_hand": quant.quantity,
+                        "quantity_on_hand": onhand_qty,
                         "cost": product.standard_price,
                         "product_type": product.detailed_type,
                         "product_category": product.categ_id.name,
@@ -61,9 +119,11 @@ class AddisSystemsProductPortalController(http.Controller):
                         "can_be_purchased": product.purchase_ok,
                         "available_in_pos": product.available_in_pos,
                         "customer_taxes": product.taxes_id.name,
-
                     }
-                    return_json.append(single_data)
+                print("i 'am taried by teybercloaseses",product.id, product.name, product.image_1920)
+
+                return_json.append(single_data)
+
             return return_json
         else:
             return {'error': 'User authentication failed'}
@@ -123,6 +183,7 @@ class AddisSystemsProductPortalController(http.Controller):
             companys = request.env['res.company'].search([])
             for company in companys:
                 single_data = {}
+                single_data["company_id"] = company.id
                 single_data["company_name"] = company.name
                 single_data["company_parent"] = company.partner_id.name
                 single_data["company_active"] = company.active
@@ -137,19 +198,15 @@ class AddisSystemsProductPortalController(http.Controller):
                 single_data["company_currency"] = company.currency_id
                 single_data["company_paper_format"] = company.paperformat_id
                 single_data["company_font"] = company.font
-                single_data["company_social_twitter"] = company.social_twitter
-                single_data["company_social_facebook"] = company.social_facebook
-                single_data["company_social_github"] = company.social_github
-                single_data["company_social_linkedin"] = company.social_linkedin
-                single_data["company_social_youtube"] = company.social_youtube
-                single_data["company_social_instagram"] = company.social_instagram
+
 
                 return_json.append(single_data)
             return return_json
         else:
             return {'error': 'User authentication failed'}
 
-    @http.route('/AddisSystems/MPoS/Update_Sales_Order_Data', type='json', methods=['GET', 'POST'], auth='user', csrf=False,
+    @http.route('/AddisSystems/MPoS/Update_Sales_Order_Data', type='json', methods=['GET', 'POST'], auth='user',
+                csrf=False,
                 save_session=False)
     def get_addis_systems_mpos_update_sales_order_data(self, **kw):
         if http.request.env.user and http.request.env.user.id:
@@ -176,8 +233,8 @@ class AddisSystemsProductPortalController(http.Controller):
         else:
             return {'error': 'User authentication failed'}
 
-
-    @http.route('/AddisSystems/MPoS/Update_Purchase_Order_Data', type='json', methods=['GET', 'POST'], auth='user', csrf=False,
+    @http.route('/AddisSystems/MPoS/Update_Purchase_Order_Data', type='json', methods=['GET', 'POST'], auth='user',
+                csrf=False,
                 save_session=False)
     def get_addis_systems_mpos_update_purchase_order_data(self, **kw):
         if http.request.env.user and http.request.env.user.id:
@@ -204,7 +261,8 @@ class AddisSystemsProductPortalController(http.Controller):
         else:
             return {'error': 'User authentication failed'}
 
-    @http.route('/AddisSystems/MPoS/Update_Invoice_Order_Data', type='json', methods=['GET', 'POST'], auth='user', csrf=False,
+    @http.route('/AddisSystems/MPoS/Update_Invoice_Order_Data', type='json', methods=['GET', 'POST'], auth='user',
+                csrf=False,
                 save_session=False)
     def get_addis_systems_mpos_update_invoice_order_data(self, **kw):
         if http.request.env.user and http.request.env.user.id:
@@ -251,8 +309,7 @@ class AddisSystemsProductPortalController(http.Controller):
         else:
             return {'error': 'User authentication failed'}
 
-    @http.route('/AddisSystems/MPoS/Update_Payments_Data', type='json', methods=['GET', 'POST'], auth='user', csrf=False,
-                save_session=False)
+    @http.route('/AddisSystems/MPoS/Update_Payments_Data', type='json', methods=['GET', 'POST'], auth='user', csrf=False,save_session=False)
     def get_addis_systems_mpos_update_payments_data(self, **kw):
         if http.request.env.user and http.request.env.user.id:
             return_json = []
@@ -279,8 +336,65 @@ class AddisSystemsProductPortalController(http.Controller):
         else:
             return {'error': 'User authentication failed'}
 
-    @http.route('/AddisSystems/MPoS/endpoints', type='json', methods=['GET', 'POST'], auth='public', csrf=False,
+    @http.route('/AddisSystems/MPoS/get_products_by_company/<int:company_id>', type='json', methods=['POST', 'GET'], auth='user',
+                csrf=False, save_session=False)
+    def get_products_by_company_id(self,company_id, **kw):
+        if request.env.user and request.env.user.id:
+            return_json = []
+            products = request.env['product.template'].search([('company_id', '=', company_id)])
+            for product in products:
+                quants = request.env['stock.quant'].search([('product_tmpl_id', '=', product.id)])
+                try:
+                    quant = quants[0]
+                    onhand_qty=quant.quantity
+                except:
+                    onhand_qty=0
+                single_data = {
+                    'company_name': product.company_id.name,
+                    'product_name': product.name,
+                    "product_id": product.id,
+                    "quantity_on_hand": onhand_qty,
+                    "internal_reference": product.default_code,
+                    "price": product.list_price,
+                    "cost": product.standard_price,
+                    "product_type": product.detailed_type,
+                    "product_category": product.categ_id.name,
+                    "invoicing_policy": product.invoice_policy,
+                    "can_be_sold": product.sale_ok,
+                    "can_be_purchased": product.purchase_ok,
+                    "available_in_pos": product.available_in_pos,
+                    "customer_taxes": product.taxes_id.name,
+                    "product_image": product.image_1920,
+
+                }
+                return_json.append(single_data)
+
+            return return_json
+        else:
+            return {'error': 'User authentication failed'}
+
+
+    @http.route('/create/customer/sales_order/data', type='json', methods=['POST', 'GET'], auth='user', csrf=False,
                 save_session=False)
+    def addis_systems_mpos_create_customer_invoice(self, **kw):
+        if request.env.user and request.env.user.id:
+            data = json.loads(request.httprequest.data)
+            print(data)
+            p = request.env['sale.order'].sudo().create(data)
+            required_fields = []
+            for field_name, field in request.env["sale.order.line"]._fields.items():
+                if field.required:
+                    required_fields.append(field_name)
+            print((required_fields))
+            print(data)
+            try:
+                return {
+                    "status": 1,
+                }
+            except Exception as e:
+                return {"status": e}
+
+    @http.route('/AddisSystems/MPoS/endpoints', type='json', methods=['GET', 'POST'], auth='public', csrf=False,save_session=False)
     def get_addis_systems_mpos_getway(self, **kw):
         if http.request.env.user and http.request.env.user.id:
             return_json = []
@@ -293,14 +407,9 @@ class AddisSystemsProductPortalController(http.Controller):
                 "purchase_order": "/AddisSystems/MPoS/Update_Purchase_Order_Data",
                 "invoice_order": "/AddisSystems/MPoS/Update_Invoice_Order_Data",
                 "payments": "/AddisSystems/MPoS/Update_Payments_Data",
+                "product_company_by_id": "/AddisSystems/MPoS/get_products_by_company/<int:company_id>",
+                "create_product": "/create/customer/sales_order/data",
             })
-
             return return_json
         else:
             return {'error': 'User authentication failed'}
-
-
-
-
-
-

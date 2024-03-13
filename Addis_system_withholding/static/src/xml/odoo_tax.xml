@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="inherit_grand_total" inherit_id="addis_systems_invoice_exchange.TaxTotalsField" name="Addis Systems Withholding Grand Total Field" owl="1">
+            <xpath expr="//tr[td/label[text()='Grand Total']]" position="replace">
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_tax_total_label">Modified Grand Total</label>
+                    </td>
+                    <td style="display:none">
+                        <span id="withhiddenflag"
+                              name="grand_total_amount"
+                              t-att-class="Object.keys(totals.groups_by_subtotal).length > 0 ? 'oe_subtotal_footer_separator' : ''"
+                              t-out="totals.grand_total_amount_formatted"
+                              t-attf-style="{{ !totals.formatted_amount_total_rounded ? 'font-size: 1em; font-weight: bold; white-space: nowrap;' : 'font-size: 1em;' }}"
+                        />
+                    </td>
+                    <td style="display:none">
+                        <span id="withnohiddenflag"
+                              name="grand_total_amount"
+                              t-att-class="Object.keys(totals.groups_by_subtotal).length > 0 ? 'oe_subtotal_footer_separator' : ''"
+                              t-out="totals.grand_total_amount_formatted_withold"
+                              t-attf-style="{{ !totals.formatted_amount_total_rounded ? 'font-size: 1em; font-weight: bold; white-space: nowrap;' : 'font-size: 1em;' }}"
+                        />
+                    </td>
+                    <td>
+                        <span id="withflag"
+                              name="grand_total_amount"
+                              t-att-class="Object.keys(totals.groups_by_subtotal).length > 0 ? 'oe_subtotal_footer_separator' : ''"
+                              t-out="totals.grand_total_amount_formatted"
+                              t-attf-style="{{ !totals.formatted_amount_total_rounded ? 'font-size: 1em; font-weight: bold; white-space: nowrap;' : 'font-size: 1em;' }}"
+                        />
+                    </td>
+                </tr>
+            </xpath>
+        </template>
+    </data>
+</odoo>
