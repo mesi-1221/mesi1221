@@ -7,13 +7,16 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='tax_totals']" position="after">
-                    <field name="withholding_amount" class="text-start oe_right" attrs="{'readonly': True, 'invisible': [('withholding_boolean', '=', False)]}" style="margin-left: 2.5em;  margin-top: 0.5px; font-size: 1em; font-weight: bold;"/>
-
+                    <field name="withholding_amount" class="text-start oe_right"
+                           attrs="{'readonly': True, 'invisible': [('withholding_boolean', '=', False)]}"
+                           style="font-size: 1.50em; font-weight: bold; white-space: break-spaces;"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_residual']" position="replace">
                 </xpath>
                 <xpath expr="//field[@name='narration']" position="before">
-                    <div style="display: flex; justify-content: center; margin-left: 3em;">
+                    <div style="font-size: 1.3em; font-weight: bold; white-space: nowrap;">
                         <label for="withholding_boolean" string="Withholding"/>
-                        <field name="withholding_boolean" class="oe_inline" style="margin-left: 1.25em;"/>
+                        <field name="withholding_boolean" class="oe_inline" style="margin-left: 0.5em;"/>
                     </div>
                 </xpath>
             </field>

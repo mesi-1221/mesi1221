@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+addis_systems_todo.access_hospital_management,access_hospital_management,addis_systems_todo.model_hospital_management,base.group_user,1,1,1,1
+addis_systems_todo.access_hospital_appointment,access_hospital_appointment,addis_systems_todo.model_hospital_appointment,base.group_user,1,1,1,1
+addis_systems_todo.access_appointment.pharmacy.lines,access_appointment_pharmacy_lines,addis_systems_todo.model_appointment_pharmacy_lines,base.group_user,1,1,1,1
+access.patient.tag,access_patient_tag,addis_systems_todo.model_patient_tag,base.group_user,1,1,1,1

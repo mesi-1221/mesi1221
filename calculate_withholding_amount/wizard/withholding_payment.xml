@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="payment_register_view_form" model="ir.ui.view">
+            <field name="name">payment.register.view.form</field>
+            <field name="model">account.payment.register</field>
+            <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='communication']" position="after">
+                    <div style="text-break text-10; display:flex;justify-content: space-between; padding-right:30px;">
+                        <label for="withholding_checkbox" string="Withholding"/>
+                        <div class="oe_edit_only">
+                            <field name="withholding_checkbox" widget="handle_checkbox"/>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

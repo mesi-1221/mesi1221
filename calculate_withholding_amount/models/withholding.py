@@ -18,15 +18,15 @@ class AccountInvoice(models.Model):
             else:
                 invoice.withholding_amount = str(0.0)+" Br"
 
-    @api.constrains('withholding_boolean')
+    @api.onchange('withholding_boolean')
     def _onchange_active_withhold(self):
         if self.withholding_boolean:
             company_record = self.env['res.currency'].search([('symbol', '=', 'Br')], limit=1)
             print("kzhkjds", self.withholding_amount, company_record.symbol)
-            line_ids = self.line_ids.ids
-            print(line_ids)
-            ids = self.line_ids.search([('display_type', '=', 'product'), ('id', 'in', line_ids)]).ids
-            print("hugewquryigjhgwqueffdsagsadgwregwqg", ids)
+            invoice_line_ids = self.invoice_line_ids.ids
+            print(invoice_line_ids)
+            ids = self.invoice_line_ids.search([('display_type', '=', 'product'), ('id', 'in', invoice_line_ids)]).ids
+            print("this ids", ids)
             for id in ids:
                 wityh = self.env['account.tax'].search([('description', '=', 'tax02')]).ids
                 if not wityh:
@@ -34,10 +34,10 @@ class AccountInvoice(models.Model):
                 normaltaxes = self.line_ids.browse(id).tax_ids.ids
                 print(normaltaxes)
                 print("yes",self.env['account.tax'].search([('id', 'in', wityh + normaltaxes)]))
-                withhold =  self.line_ids.browse(id).tax_ids = self.env['account.tax'].search([('id', 'in', wityh + normaltaxes)])
-                print(withhold)
+                self.line_ids.browse(id).tax_ids = self.env['account.tax'].search([('id', 'in', wityh + normaltaxes)])
         else:
             line_ids = self.line_ids.ids
+            # print(line_ids)
             ids = self.line_ids.search([('display_type', '=', 'product'), ('id', 'in', line_ids)]).ids
             for id in ids:
                 wityh = self.env['account.tax'].search([('description', '=', 'tax02')]).ids
